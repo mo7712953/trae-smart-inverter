@@ -1,0 +1,25 @@
+{
+  "visitors": 56,
+  "uniqueVisitors": 1,
+  "visitorIPs": [
+    "::1"
+  ],
+  "downloads": {
+    "android": 0,
+    "ios": 0,
+    "total": 0
+  },
+  "dailyStats": {
+    "2025-07-29": {
+      "visitors": 56,
+      "uniqueVisitors": 1,
+      "visitorIPs": {},
+      "downloads": {
+        "android": 0,
+        "ios": 0,
+        "total": 0
+      }
+    }
+  },
+  "lastUpdated": "2025-07-29T08:45:13.462Z"
+}
