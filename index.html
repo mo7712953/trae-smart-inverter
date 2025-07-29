@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">智能逆变器系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .language-btn {
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .language-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .language-btn.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .system-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            margin: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .wechat-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .wechat-modal {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 350px;
+            margin: 20px;
+        }
+
+        .wechat-modal h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .wechat-modal p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .wechat-close {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        /* Features Section */
+        .features-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .features-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .features-subtitle {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-desc {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        /* Screenshots Section */
+        .screenshots-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .screenshots-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .screenshots-subtitle {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .screenshots-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .screenshot {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 60px 20px;
+            border-radius: 15px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot-item {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item:hover {
+            transform: scale(1.05);
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .cta-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .cta-subtitle {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin-bottom: 30px;
+            }
+
+            .features-section,
+            .screenshots-section,
+            .cta-section {
+                padding: 30px 20px;
+                margin-bottom: 30px;
+            }
+
+            .features-title,
+            .screenshots-title {
+                font-size: 24px;
+            }
+
+            .language-selector {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots-container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="language-btn active" onclick="setLanguage('zh')">中文</button>
+        <button class="language-btn" onclick="setLanguage('en')">English</button>
+        <button class="language-btn" onclick="setLanguage('ar')">العربية</button>
+    </div>
+
+    <!-- Main App Download Section -->
+    <div class="container">
+        <div class="app-icon">⚡</div>
+        <h1 id="app-title">智能逆变器管理系统</h1>
+        <p class="subtitle" id="app-description">专业的太阳能逆变器监控与管理解决方案</p>
+        
+        <div class="system-info">
+            <span id="detected-system">检测到的系统：</span>
+            <strong id="system-name">未知系统</strong>
+        </div>
+        
+        <button class="download-btn" onclick="downloadApp()">
+            <span id="download-icon">📱</span>
+            <span id="download-text">立即下载</span>
+        </button>
+        
+        <button class="download-btn" onclick="downloadApp()">
+            <span id="download-text-alt">备用下载</span>
+        </button>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <h2 class="features-title" id="features-title">为什么选择我们的逆变器</h2>
+        <p class="features-subtitle" id="features-subtitle">高效、稳定、智能的太阳能发电解决方案</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title" id="feature1-title">高效转换</h3>
+                <p class="feature-desc" id="feature1-desc">99.5%转换效率，最大化太阳能发电收益，降低用电成本</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3 class="feature-title" id="feature2-title">安全防护</h3>
+                <p class="feature-desc" id="feature2-desc">多重安全防护机制，过压、过流、过温保护，确保设备安全</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title" id="feature3-title">智能监控</h3>
+                <p class="feature-desc" id="feature3-desc">实时监控发电数据，远程故障诊断，智能优化发电效率</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screenshots Section -->
+    <div class="screenshots-section">
+        <h2 class="screenshots-title" id="screenshots-title">APP界面展示</h2>
+        <p class="screenshots-subtitle" id="screenshots-subtitle">直观了解逆变器产品和功能特色</p>
+        
+        <div class="screenshots-container" id="screenshotsContainer">
+            <div class="screenshot">📱 主界面</div>
+            <div class="screenshot">⚙️ 设置页面</div>
+            <div class="screenshot">🎯 功能展示</div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="cta-section">
+        <h2 class="cta-title" id="cta-title">立即联系我们</h2>
+        <p class="cta-subtitle" id="cta-subtitle">专业的太阳能发电解决方案，助力绿色能源发展</p>
+        
+        <button class="download-btn" onclick="downloadApp()">
+            <span id="cta-download-text">获取产品手册</span>
+        </button>
+    </div>
+
+    <!-- WeChat Overlay -->
+    <div class="wechat-overlay" id="wechat-overlay">
+        <div class="wechat-modal">
+            <h3 id="wechat-title">请在浏览器中打开</h3>
+            <p id="wechat-message">点击右上角菜单，选择"在浏览器中打开"即可下载应用</p>
+            <button class="wechat-close" onclick="closeWeChatOverlay()" id="wechat-close">知道了</button>
+        </div>
+    </div>
+
+    <script>
+        // Detect system
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isAndroid = /android/i.test(userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        const isWeChat = /MicroMessenger/i.test(userAgent);
+        
+        let downloadLinks = {};
+        let currentLanguage = 'zh';
+        
+        // Translations
+        const translations = {
+            zh: {
+                pageTitle: '智能逆变器系统',
+                appTitle: '智能逆变器管理系统',
+                appDescription: '专业的太阳能逆变器监控与管理解决方案',
+                downloadText: '立即下载',
+                downloadTextAlt: '备用下载',
+                detectedSystem: '检测到的系统：',
+                android: '安卓系统',
+                ios: '苹果系统',
+                unknown: '未知系统',
+                wechatTitle: '请在浏览器中打开',
+                wechatMessage: '点击右上角菜单，选择"在浏览器中打开"即可下载应用',
+                wechatClose: '知道了',
+                noLink: '暂无下载链接',
+                featuresTitle: '为什么选择我们的逆变器',
+                featuresSubtitle: '高效、稳定、智能的太阳能发电解决方案',
+                feature1Title: '高效转换',
+                feature1Desc: '99.5%转换效率，最大化太阳能发电收益，降低用电成本',
+                feature2Title: '安全防护',
+                feature2Desc: '多重安全防护机制，过压、过流、过温保护，确保设备安全',
+                feature3Title: '智能监控',
+                feature3Desc: '实时监控发电数据，远程故障诊断，智能优化发电效率',
+                screenshotsTitle: 'APP界面展示',
+                screenshotsSubtitle: '直观了解逆变器产品和功能特色',
+                ctaTitle: '立即联系我们',
+                ctaSubtitle: '专业的太阳能发电解决方案，助力绿色能源发展',
+                ctaDownloadText: '获取产品手册'
+            },
+            en: {
+                pageTitle: 'Smart Inverter System',
+                appTitle: 'Smart Inverter Management System',
+                appDescription: 'Professional solar inverter monitoring and management solutions',
+                downloadText: 'Download Now',
+                downloadTextAlt: 'Alternative Download',
+                detectedSystem: 'Detected System:',
+                android: 'Android',
+                ios: 'iOS',
+                unknown: 'Unknown System',
+                wechatTitle: 'Please Open in Browser',
+                wechatMessage: 'Click the menu in the upper right corner and select "Open in Browser" to download the app',
+                wechatClose: 'Got it',
+                noLink: 'No download link available',
+                featuresTitle: 'Why Choose Our Inverters',
+                featuresSubtitle: 'Efficient, stable, and intelligent solar power generation solutions',
+                feature1Title: 'High Efficiency',
+                feature1Desc: '99.5% conversion efficiency, maximizing solar power generation benefits and reducing energy costs',
+                feature2Title: 'Safety Protection',
+                feature2Desc: 'Multiple safety protection mechanisms with overvoltage, overcurrent, and overtemperature protection',
+                feature3Title: 'Smart Monitoring',
+                feature3Desc: 'Real-time monitoring of power generation data, remote fault diagnosis, intelligent optimization',
+                screenshotsTitle: 'APP Interface Showcase',
+                screenshotsSubtitle: 'Intuitive understanding of inverter products and functional features',
+                ctaTitle: 'Contact Us Now',
+                ctaSubtitle: 'Professional solar power generation solutions for green energy development',
+                ctaDownloadText: 'Get Brochure'
+            },
+            ar: {
+                pageTitle: 'نظام العاكس الذكي',
+                appTitle: 'نظام إدارة العاكس الذكي',
+                appDescription: 'حلول مراقبة وإدارة عاكس الطاقة الشمسية المهنية',
+                downloadText: 'حمل الآن',
+                downloadTextAlt: 'تحميل بديل',
+                detectedSystem: 'النظام المكتشف:',
+                android: 'أندرويد',
+                ios: 'آي أو إس',
+                unknown: 'نظام غير معروف',
+                wechatTitle: 'يرجى الفتح في المتصفح',
+                wechatMessage: 'انقر على القائمة في الزاوية اليمنى العلوية واختر "فتح في المتصفح" لتحميل التطبيق',
+                wechatClose: 'فهمت',
+                noLink: 'رابط التحميل غير متوفر',
+                featuresTitle: 'لماذا تختار عاكساتنا',
+                featuresSubtitle: 'حلول توليد الطاقة الشمسية الفعالة والمستقرة والذكية',
+                feature1Title: 'كفاءة عالية',
+                feature1Desc: 'كفاءة تحويل 99.5%، تعظيم فوائد توليد الطاقة الشمسية وتقليل تكاليف الطاقة',
+                feature2Title: 'حماية الأمان',
+                feature2Desc: 'آليات حماية أمان متعددة مع حماية من الجهد الزائد والتيار الزائد ودرجة الحرارة الزائدة',
+                feature3Title: 'مراقبة ذكية',
+                feature3Desc: 'مراقبة بيانات توليد الطاقة في الوقت الفعلي، تشخيص الأعطال عن بُعد، تحسين ذكي',
+                screenshotsTitle: 'عرض واجهة التطبيق',
+                screenshotsSubtitle: 'فهم بديهي لمنتجات العاكس والميزات الوظيفية',
+                ctaTitle: 'اتصل بنا الآن',
+                ctaSubtitle: 'حلول توليد الطاقة الشمسية المهنية لتطوير الطاقة الخضراء',
+                ctaDownloadText: 'احصل على الكتيب'
+            }
+        };
+
+        // Load download links
+        fetch('/links')
+            .then(response => response.json())
+            .then(data => {
+                downloadLinks = data;
+            })
+            .catch(error => console.error('Error loading download links:', error));
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active language button
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update text content
+            const t = translations[lang];
+            document.getElementById('page-title').textContent = t.pageTitle;
+            document.getElementById('app-title').textContent = t.appTitle;
+            document.getElementById('app-description').textContent = t.appDescription;
+            document.getElementById('download-text').textContent = t.downloadText;
+            document.getElementById('download-text-alt').textContent = t.downloadTextAlt;
+            document.getElementById('detected-system').textContent = t.detectedSystem;
+            document.getElementById('wechat-title').textContent = t.wechatTitle;
+            document.getElementById('wechat-message').textContent = t.wechatMessage;
+            document.getElementById('wechat-close').textContent = t.wechatClose;
+            
+            // Update features section
+            document.getElementById('features-title').textContent = t.featuresTitle;
+            document.getElementById('features-subtitle').textContent = t.featuresSubtitle;
+            document.getElementById('feature1-title').textContent = t.feature1Title;
+            document.getElementById('feature1-desc').textContent = t.feature1Desc;
+            document.getElementById('feature2-title').textContent = t.feature2Title;
+            document.getElementById('feature2-desc').textContent = t.feature2Desc;
+            document.getElementById('feature3-title').textContent = t.feature3Title;
+            document.getElementById('feature3-desc').textContent = t.feature3Desc;
+            
+            // Update screenshots section
+            document.getElementById('screenshots-title').textContent = t.screenshotsTitle;
+            document.getElementById('screenshots-subtitle').textContent = t.screenshotsSubtitle;
+            
+            // Update CTA section
+            document.getElementById('cta-title').textContent = t.ctaTitle;
+            document.getElementById('cta-subtitle').textContent = t.ctaSubtitle;
+            document.getElementById('cta-download-text').textContent = t.ctaDownloadText;
+            
+            // Update system name
+            updateSystemInfo();
+            
+            // Update download button icon based on detected system
+            updateDownloadIcon();
+            
+            // Update page direction for Arabic
+            if (lang === 'ar') {
+                document.body.style.direction = 'rtl';
+                document.documentElement.lang = 'ar';
+            } else {
+                document.body.style.direction = 'ltr';
+                document.documentElement.lang = lang;
+            }
+        }
+
+        function updateSystemInfo() {
+            const t = translations[currentLanguage];
+            let systemName = t.unknown;
+            
+            if (isAndroid) {
+                systemName = t.android;
+            } else if (isIOS) {
+                systemName = t.ios;
+            }
+            
+            document.getElementById('system-name').textContent = systemName;
+        }
+        
+        function updateDownloadIcon() {
+            const downloadIcon = document.getElementById('download-icon');
+            
+            if (isAndroid) {
+                downloadIcon.textContent = '🤖';
+            } else if (isIOS) {
+                downloadIcon.textContent = '🍎';
+            } else {
+                downloadIcon.textContent = '📱';
+            }
+        }
+
+        function downloadApp() {
+            // Check if in WeChat
+            if (isWeChat) {
+                document.getElementById('wechat-overlay').style.display = 'flex';
+                return;
+            }
+            
+            let downloadUrl = '';
+            let platform = '';
+            
+            if (isAndroid && downloadLinks.android) {
+                downloadUrl = downloadLinks.android;
+                platform = 'android';
+            } else if (isIOS && downloadLinks.ios) {
+                downloadUrl = downloadLinks.ios;
+                platform = 'ios';
+            }
+            
+            if (downloadUrl) {
+                // Record download statistics
+                fetch('/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ platform })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Download recorded:', data);
+                })
+                .catch(error => {
+                    console.error('Error recording download:', error);
+                });
+                
+                // Open download link
+                window.open(downloadUrl, '_blank');
+            } else {
+                alert(translations[currentLanguage].noLink);
+            }
+        }
+
+        function closeWeChatOverlay() {
+            document.getElementById('wechat-overlay').style.display = 'none';
+        }
+
+        // 加载应用截图
+         async function loadScreenshots() {
+             try {
+                 const response = await fetch('/screenshots');
+                 
+                 if (!response.ok) {
+                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                 }
+                 
+                 const contentType = response.headers.get('content-type');
+                 if (!contentType || !contentType.includes('application/json')) {
+                     console.error('响应不是JSON格式:', contentType);
+                     throw new Error('Invalid response format');
+                 }
+                 
+                 const screenshots = await response.json();
+                 
+                 const container = document.getElementById('screenshotsContainer');
+                 
+                 if (screenshots.length === 0) {
+                     // 如果没有截图，显示默认占位符
+                     container.innerHTML = `
+                         <div class="screenshot">📱 主界面</div>
+                         <div class="screenshot">⚙️ 设置页面</div>
+                         <div class="screenshot">🎯 功能展示</div>
+                     `;
+                     return;
+                 }
+                 
+                 // 显示实际截图
+                 container.innerHTML = screenshots.map(screenshot => `
+                     <div class="screenshot-item">
+                         <img src="${screenshot.url}" alt="${screenshot.originalName}" onclick="previewScreenshot('${screenshot.url}')">
+                     </div>
+                 `).join('');
+             } catch (error) {
+                 console.error('加载截图失败:', error);
+                 // 显示默认占位符
+                 const container = document.getElementById('screenshotsContainer');
+                 container.innerHTML = `
+                     <div class="screenshot">📱 主界面</div>
+                     <div class="screenshot">⚙️ 设置页面</div>
+                     <div class="screenshot">🎯 功能展示</div>
+                 `;
+             }
+         }
+
+        // 预览截图
+        function previewScreenshot(url) {
+            // 创建模态框显示大图
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                cursor: pointer;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                border-radius: 10px;
+            `;
+            
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            
+            // 点击关闭
+            modal.addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+
+        // Initialize
+        updateSystemInfo();
+        updateDownloadIcon();
+        loadScreenshots();
+        
+        // Auto-detect language based on browser language
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang.startsWith('en')) {
+            setLanguage('en');
+        } else if (browserLang.startsWith('ar')) {
+            setLanguage('ar');
+        }
+    </script>
+</body>
+</html>
